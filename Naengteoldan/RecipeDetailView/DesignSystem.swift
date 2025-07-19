@@ -79,6 +79,18 @@ enum DesignSystem {
       endPoint: .bottomTrailing
     )
     
+    // Liquid Glass Effects
+    static let liquidGlassBackground = Color.white.opacity(0.15)
+    static let liquidGlassBorder = Color.white.opacity(0.25)
+    static let liquidGlassSelectedBackground = LinearGradient(
+      colors: [
+        Color.white.opacity(0.3),
+        Color.white.opacity(0.1)
+      ],
+      startPoint: .topLeading,
+      endPoint: .bottomTrailing
+    )
+    
     // Semantic Colors
     static let cardBackground = Color.gray.opacity(0.1)
     static let whiteOverlay = Color.white.opacity(0.1)

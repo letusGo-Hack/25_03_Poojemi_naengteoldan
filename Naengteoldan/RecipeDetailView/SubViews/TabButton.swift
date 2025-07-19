@@ -25,15 +25,31 @@ struct TabButton: View {
       .foregroundColor(isSelected ? .white : .primary)
       .frame(maxWidth: DesignSystem.Size.cardMaxWidth)
       .padding(.vertical, DesignSystem.Spacing.medium)
-//      .background(
-//        Group {
-//          if isSelected {
-//            DesignSystem.Colors.primaryButtonGradient
-//          } else {
-//            Color.clear
-//          }
-//        }
-//      )
+      .background(
+        Group {
+          if isSelected {
+            // Liquid glass selected state
+            DesignSystem.Colors.liquidGlassSelectedBackground
+              .overlay(
+                RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.large - 2)
+                  .stroke(DesignSystem.Colors.liquidGlassBorder, lineWidth: 1)
+              )
+              .shadow(
+                color: DesignSystem.Colors.shadowColor.opacity(0.1),
+                radius: DesignSystem.Shadow.card.radius,
+                x: DesignSystem.Shadow.card.x,
+                y: DesignSystem.Shadow.card.y
+              )
+          } else {
+            // Liquid glass unselected state
+            DesignSystem.Colors.liquidGlassBackground
+              .overlay(
+                RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.large - 2)
+                  .stroke(DesignSystem.Colors.liquidGlassBorder, lineWidth: 0.5)
+              )
+          }
+        }
+      )
       .clipShape(RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.large - 2))
     }
     .buttonStyle(PlainButtonStyle())

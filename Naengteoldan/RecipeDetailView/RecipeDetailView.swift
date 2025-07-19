@@ -9,30 +9,20 @@ import SwiftUI
 
 struct RecipeDetailView: View {
   let recipe: Recipe
-  @State private var selectedTab = 0
   @State private var animateHeader = false
   @State private var animateCards = false
   
   var body: some View {
-    ScrollView {
+    VStack {
       VStack(spacing: 0) {
         HeaderSection(recipeName: recipe.name, animateHeader: animateHeader)
         
         // 메인 콘텐츠
-        VStack(spacing: DesignSystem.Spacing.huge) {
-          // 요리 정보 카드들
-          cookingInfoCards
-          
-          // 탭 선택기
-          tabSelector
-          
-          // 선택된 탭에 따른 콘텐츠
-          tabContent
-        }
+        recipeSectionsView
         .padding(.horizontal, DesignSystem.Spacing.extraLarge)
         .padding(.vertical, DesignSystem.Spacing.huge)
         .background(
-          RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.extraLarge)
+          Rectangle()
             .fill(Color(.systemBackground))
             .shadow(
               color: DesignSystem.Shadow.text.color.opacity(0.1),
@@ -41,7 +31,6 @@ struct RecipeDetailView: View {
               y: -DesignSystem.Shadow.card.y
             )
         )
-        .offset(y: -DesignSystem.Spacing.extraLarge)
       }
     }
     .ignoresSafeArea(edges: .top)
@@ -52,7 +41,7 @@ struct RecipeDetailView: View {
       withAnimation(DesignSystem.Animation.springSlow.delay(0.3)) {
         animateCards = true
       }
-    }
+    }.padding(.bottom, 12)
   }
   
   
@@ -75,47 +64,76 @@ struct RecipeDetailView: View {
     .opacity(animateCards ? 1 : 0)
   }
   
-  // MARK: - Tab Selector
-  private var tabSelector: some View {
-    HStack(spacing: 0) {
-      TabButton(title: "재료", icon: "🥕", isSelected: selectedTab == 0) {
-        withAnimation(DesignSystem.Animation.springFast) {
-          selectedTab = 0
-        }
-      }
+  // MARK: - Recipe Sections View
+  private var recipeSectionsView: some View {
+    ScrollView {
+      cookingInfoCards
       
-      TabButton(title: "조리법", icon: "📝", isSelected: selectedTab == 1) {
-        withAnimation(DesignSystem.Animation.springFast) {
-          selectedTab = 1
+      LazyVStack(spacing: DesignSystem.Spacing.huge, pinnedViews: [.sectionHeaders]) {
+        // 재료 섹션
+        Section {
+          IngredientsView(ingredients: recipe.ingredients, animateCards: animateCards)
+        } header: {
+          SectionHeader(
+            title: "재료",
+            icon: "carrot.fill",
+            animateCards: animateCards
+          )
+        }
+        
+        // 조리법 섹션
+        Section {
+          InstructionsView(instructions: recipe.instructions, animateCards: animateCards)
+        } header: {
+          SectionHeader(
+            title: "조리법",
+            icon: "doc.text.fill",
+            animateCards: animateCards
+          )
         }
       }
     }
-    .background(DesignSystem.Colors.cardBackground)
-    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.large))
+    .frame(height: DesignSystem.Size.tabContentHeight)
     .scaleEffect(animateCards ? 1 : 0.8)
     .opacity(animateCards ? 1 : 0)
   }
+}
+
+// MARK: - Section Header
+struct SectionHeader: View {
+  let title: String
+  let icon: String
+  let animateCards: Bool
   
-  // MARK: - Tab Content
-  private var tabContent: some View {
-    ScrollView {
-      Group {
-        if selectedTab == 0 {
-          IngredientsView(ingredients: recipe.ingredients, animateCards: animateCards)
-        } else {
-          InstructionsView(instructions: recipe.instructions, animateCards: animateCards)
-        }
-      }
-      .transition(
-        .asymmetric(
-          insertion: .move(edge: .trailing)
-            .combined(with: .opacity),
-          removal: .move(edge: .leading)
-            .combined(with: .opacity)
-        )
-      )
+  var body: some View {
+    HStack(spacing: DesignSystem.Spacing.medium) {
+      Image(systemName: icon)
+        .font(DesignSystem.Typography.emojiSmall)
+        .foregroundColor(.white)
+      
+      Text(title)
+        .font(DesignSystem.Typography.title)
+        .foregroundColor(.white)
+      
+      Spacer()
     }
-    .frame(height: DesignSystem.Size.tabContentHeight)
+    .padding(.horizontal, DesignSystem.Spacing.extraLarge)
+    .padding(.vertical, DesignSystem.Spacing.large)
+    .background(
+      DesignSystem.Colors.liquidGlassSelectedBackground
+        .overlay(
+          Rectangle()
+            .stroke(DesignSystem.Colors.liquidGlassBorder, lineWidth: 1)
+        )
+    )
+    .shadow(
+      color: DesignSystem.Colors.shadowColor.opacity(0.1),
+      radius: DesignSystem.Shadow.card.radius,
+      x: DesignSystem.Shadow.card.x,
+      y: DesignSystem.Shadow.card.y
+    )
+    .scaleEffect(animateCards ? 1 : 0.8)
+    .opacity(animateCards ? 1 : 0)
   }
 }
 
@@ -139,7 +157,7 @@ struct SampleView: View {
         "팬에 기름을 두르고 중불에서 대패삼겹살을 볶아주세요.",
         "고기가 익으면 마늘, 생강, 양파를 넣고 함께 볶아주세요.",
         "고추장, 간장, 설탕을 넣고 골고루 섞어가며 볶아주세요.",
-        "마지막에 대파를 넣고 살짝 볶아 완성해주세요."
+        "마지막에 대파를 넣고 살짝 볶아 완성해주세요.마지막에 대파를 넣고 살짝 볶아 완성해주세요.마지막에 대파를 넣고 살짝 볶아 완성해주세요.마지막에 대파를 넣고 살짝 볶아 완성해주세요.마지막에 대파를 넣고 살짝 볶아 완성해주세요.마지막에 대파를 넣고 살짝 볶아 완성해주세요.마지막에 대파를 넣고 살짝 볶아 완성해주세요."
       ],
       prepTime: "15분",
       cookTime: "20분",
