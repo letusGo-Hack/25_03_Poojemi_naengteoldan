@@ -140,13 +140,6 @@ struct IngredientChecklistView: View {
           .padding(.vertical, 4)
           .background(Color.blue.opacity(0.1))
           .cornerRadius(8)
-        
-        // 복사 버튼
-        Button(action: copyCheckedIngredients) {
-          Image(systemName: "doc.on.clipboard")
-            .font(.caption)
-            .foregroundColor(.blue)
-        }
       }
       
       if checkedIngredients.isEmpty {
@@ -288,9 +281,12 @@ struct IngredientChecklistView: View {
       return
     }
     
-    let newIngredient = Ingredient(name: trimmedText)
-    ingredients.append(newIngredient)
-    ingredientText = "" // 입력 필드 초기화
+    Task {
+      //TODO: - 만약 생성 시 식재료 검증을 한다면 이 영역에서 처리
+      let newIngredient = Ingredient(name: trimmedText)
+      ingredients.append(newIngredient)
+      ingredientText = "" // 입력 필드 초기화
+    }
   }
   
   /// 특정 인덱스의 식재료 체크 상태 토글
@@ -317,16 +313,19 @@ struct IngredientChecklistView: View {
   private func updateSelectedIngredients() {
     selectedIngredients = checkedIngredientRawValues
   }
-  
-  // MARK: - 체크된 식재료 관련 메서드들
-  
-  /// 체크된 식재료들을 클립보드에 복사
-  private func copyCheckedIngredients() {
-    let ingredientText = checkedIngredientRawValues.joined(separator: ", ")
-    UIPasteboard.general.string = ingredientText
-    
-    // 복사 완료 피드백 (실제 앱에서는 Toast 메시지나 Alert 표시 권장)
-    print("클립보드에 복사됨: \(ingredientText)")
+
+}
+
+
+// MARK: 미사용 코드
+extension IngredientChecklistView {
+  /// 체크된 식재료 데이터를 구조화된 형태로 반환
+  func getCheckedIngredientsData() -> (count: Int, names: [IngredientRawValue], ingredients: [Ingredient]) {
+    return (
+      count: checkedIngredients.count,
+      names: checkedIngredientRawValues,
+      ingredients: checkedIngredients
+    )
   }
   
   /// 체크된 식재료 결과를 반환하고 출력 (디버깅/테스트용)
@@ -338,14 +337,6 @@ struct IngredientChecklistView: View {
     print("상세 정보: \(result.ingredients)")
   }
   
-  /// 체크된 식재료 데이터를 구조화된 형태로 반환
-  func getCheckedIngredientsData() -> (count: Int, names: [IngredientRawValue], ingredients: [Ingredient]) {
-    return (
-      count: checkedIngredients.count,
-      names: checkedIngredientRawValues,
-      ingredients: checkedIngredients
-    )
-  }
 }
 
 
@@ -353,43 +344,3 @@ struct IngredientChecklistView: View {
 #Preview {
   ParentView()
 }
-
-// MARK: - 사용 예시: 외부에서 IngredientChecklistView 사용하는 방법
-
-struct ParentView: View {
-  @State private var selectedIngredients: [String] = []
-  @State private var sliderValue: Double = 1.0
-  
-  var body: some View {
-    //    VStack {
-    IngredientChecklistView(
-      selectedIngredients: $selectedIngredients,
-      sliderValue: $sliderValue,
-      onGenerateButtonTapped: {
-        // 생성 버튼 클릭시 실행될 로직
-        handleGenerate()
-      }
-    )
-    
-    //             // 선택된 데이터 확인용
-    //             VStack {
-    //                 Text("선택된 식재료: \(selectedIngredients.joined(separator: ", "))")
-    //                 Text("슬라이더 값: \(sliderValue, specifier: "%.1f")")
-    //                 Text("퍼센티지: \((sliderValue / 2.0) * 100, specifier: "%.0f")%")
-    //             }
-    //             .padding()
-    //    }
-  }
-  
-  private func handleGenerate() {
-    print("=== 생성 요청 ===")
-    print("선택된 식재료: \(selectedIngredients)")
-    print("강도: \(sliderValue)")
-    print("퍼센티지: \((sliderValue / 2.0) * 100)%")
-    
-    // 여기에 실제 생성 로직 구현
-    // 예: API 호출, 데이터 처리 등
-  }
-}
-
-
