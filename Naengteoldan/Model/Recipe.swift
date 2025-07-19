@@ -46,8 +46,8 @@ struct Recipe: Identifiable {
 
     // MARK: - 레시피 상세 화면에서 보일 항목
     // 재료 목록 (문자열 또는 별도의 구조체로 분할 가능)
-    var ingredients: String
+    var ingredients: [String]
 
     // 조리 방법
-    var directions: String
+    var directions: [String]
 }
