@@ -15,7 +15,7 @@ struct ContentView: View {
           IngredientList()
         }
       } label: {
-        Label("재료", systemImage: "refrigerator")
+        Label("냉장고", systemImage: "refrigerator")
       }
 
       Tab {

@@ -22,31 +22,38 @@ struct IngredientList: View {
     Ingredient(name: "밀가루", icon: .bread)
   ]
 
-  @State private var selection = Set<UUID>()
+  @State private var selection = Set<Ingredient>()
   @State private var isAddIngredientViewPresented = false
 
   var body: some View {
     ScrollView {
       LazyVGrid(columns: Array(repeating: GridItem(spacing: 16), count: 3), spacing: 16) {
         ForEach(ingredients) { ingredient in
-          VStack(spacing: 4) {
-            if let icon = ingredient.icon {
-              Text(icon.rawValue)
-                .font(.system(size: 32))
+          Button {
+            if selection.contains(ingredient) {
+              selection.remove(ingredient)
+            } else {
+              selection.insert(ingredient)
             }
-            Text(ingredient.name)
-              .foregroundStyle(.secondary)
-              .font(.system(size: 14))
-              .frame(maxWidth: .infinity)
+          } label: {
+            VStack(spacing: 4) {
+              if let icon = ingredient.icon {
+                Text(icon.rawValue)
+                  .font(.system(size: 32))
+              }
+              Text(ingredient.name)
+                .foregroundStyle(selection.contains(ingredient) ? .white : .secondary)
+                .font(.system(size: 14))
+                .frame(maxWidth: .infinity)
+            }
+            .padding(12)
           }
-          .padding(12)
-          .glassEffect(in: .rect(cornerRadius: 16.0))
+          .glassEffect(
+            selection.contains(ingredient) ?
+              .regular.interactive().tint(.accentColor) :
+                .regular.interactive()
+          )
           .buttonStyle(.plain)
-        }
-        .contextMenu {
-          Button("삭제", systemImage: "trash", role: .destructive) {
-
-          }
         }
       }
       .padding(16)
