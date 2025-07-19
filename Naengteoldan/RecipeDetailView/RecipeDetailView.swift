@@ -87,17 +87,20 @@ struct RecipeDetailView: View {
   
   // MARK: - Tab Content
   private var tabContent: some View {
-    Group {
-      if selectedTab == 0 {
-        IngredientsView(ingredients: recipe.ingredients, animateCards: animateCards)
-      } else {
-        InstructionsView(instructions: recipe.instructions, animateCards: animateCards)
+    ScrollView {
+      Group {
+        if selectedTab == 0 {
+          IngredientsView(ingredients: recipe.ingredients, animateCards: animateCards)
+        } else {
+          InstructionsView(instructions: recipe.instructions, animateCards: animateCards)
+        }
       }
+      .transition(.asymmetric(
+        insertion: .move(edge: .trailing).combined(with: .opacity),
+        removal: .move(edge: .leading).combined(with: .opacity)
+      ))
     }
-    .transition(.asymmetric(
-      insertion: .move(edge: .trailing).combined(with: .opacity),
-      removal: .move(edge: .leading).combined(with: .opacity)
-    ))
+    .frame(height: DesignSystem.Size.tabContentHeight)
   }
 }
 

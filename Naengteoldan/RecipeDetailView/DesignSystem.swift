@@ -51,6 +51,7 @@ enum DesignSystem {
     static let buttonHeight: CGFloat = 56
     static let headerHeight: CGFloat = 200
     static let cardMaxWidth: CGFloat = .infinity
+    static let tabContentHeight: CGFloat = 400
   }
   
   // MARK: - Colors
