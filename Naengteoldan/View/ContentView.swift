@@ -19,8 +19,9 @@ struct ContentView: View {
             .glassEffect(.regular, in: Rectangle())
             .ignoresSafeArea()
         }
-        .sheet(item: $modelData.generatedRecipe) { recipe in
+        .fullScreenCover(item: $modelData.generatedRecipe) { recipe in
           RecipeDetailView(recipe: recipe, modelData: modelData)
+            .background(.white)
             .presentationDragIndicator(.visible)
         }
     }
