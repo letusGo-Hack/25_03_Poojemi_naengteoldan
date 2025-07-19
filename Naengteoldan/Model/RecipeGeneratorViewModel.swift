@@ -9,91 +9,199 @@ import SwiftUI
 import Combine
 import FoundationModels
 
-class RecipeGeneratorViewModel: ObservableObject {
-  @Published var ingredientsInput: String = ""
-  @Published var generatedRecipe: Recipe?
-  @Published var isLoading: Bool = false
-  @Published var errorMessage: String?
-  @Published var modelAvailabilityStatus: String = "모델 가용성 확인 중..."
+@Observable
+class RecipeGeneratorViewModel {
   
-  var systemLanguageModel = SystemLanguageModel.default
+  // MARK: - Public Properties
+  
+  var ingredientsInput: String = ""
+  var generatedRecipe: Recipe?
+  var isLoading: Bool = false
+  var errorMessage: String?
+  var modelAvailabilityStatus: String = "모델 가용성 확인 중..."
+  
+  // MARK: - Private Properties
+  
+  private let systemLanguageModel = SystemLanguageModel.default
+  private var session: LanguageModelSession?
+  
+  // MARK: - Computed Properties
+  
+  var isModelAvailable: Bool {
+    systemLanguageModel.availability == .available
+  }
+  
+  var canGenerateRecipe: Bool {
+    isModelAvailable && !ingredientsInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !isLoading
+  }
+  
+  // MARK: - Initialization
   
   init() {
     checkModelAvailability()
+    setupSession()
   }
   
-  private func checkModelAvailability() {
-    switch systemLanguageModel.availability {
-    case .available:
-      modelAvailabilityStatus = "모델 사용 가능"
-    case .unavailable(.deviceNotEligible):
-      modelAvailabilityStatus = "오류: 기기가 Apple Intelligence를 지원하지 않습니다."
-    case .unavailable(.appleIntelligenceNotEnabled):
-      modelAvailabilityStatus = "오류: Apple Intelligence가 활성화되지 않았습니다. 시스템 설정에서 켜주세요."
-    case .unavailable(.modelNotReady):
-      modelAvailabilityStatus = "오류: 모델이 준비되지 않았습니다 (다운로드 중 또는 시스템 문제)."
-    case .unavailable(let reason):
-      modelAvailabilityStatus = "오류: 알 수 없는 이유로 모델을 사용할 수 없습니다. (\(reason))"
-    }
-  }
+  // MARK: - Public Methods
   
-  
-  func generateRecipe() {
-    guard systemLanguageModel.availability == .available else {
-      errorMessage = modelAvailabilityStatus
+  @MainActor
+  func generateRecipe() async {
+    guard canGenerateRecipe else {
+      if !isModelAvailable {
+        errorMessage = modelAvailabilityStatus
+      } else if ingredientsInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        errorMessage = "재료를 입력해주세요."
+      }
       return
     }
     
+    await performRecipeGeneration()
+  }
+  
+  @MainActor
+  func clearResults() {
+    generatedRecipe = nil
+    errorMessage = nil
+  }
+  
+  @MainActor
+  func retryGeneration() async {
+    await generateRecipe()
+  }
+  
+  // MARK: - Private Methods
+  private func checkModelAvailability() {
+    modelAvailabilityStatus = switch systemLanguageModel.availability {
+    case .available:
+      "모델 사용 가능"
+    case .unavailable(.deviceNotEligible):
+      "오류: 기기가 Apple Intelligence를 지원하지 않습니다."
+    case .unavailable(.appleIntelligenceNotEnabled):
+      "오류: Apple Intelligence가 활성화되지 않았습니다. 시스템 설정에서 켜주세요."
+    case .unavailable(.modelNotReady):
+      "오류: 모델이 준비되지 않았습니다. 잠시 후 다시 시도해주세요."
+    case .unavailable(let reason):
+      "오류: 모델을 사용할 수 없습니다. (\(reason))"
+    }
+  }
+  
+  private func setupSession() {
+    guard isModelAvailable else { return }
+    
+    let instructions = Instructions("""
+            당신은 재료 목록을 바탕으로 실용적이고 맛있는 레시피를 만드는 전문 요리사입니다.
+            
+            다음 규칙을 따라 레시피를 생성해주세요:
+            1. 레시피 이름은 매력적이고 구체적이어야 합니다.
+            2. 재료 목록은 정확한 양과 함께 명시해주세요.
+            3. 조리 지침은 명확하고 따라하기 쉬운 단계별 설명으로 작성해주세요.
+            4. 실제 조리 가능한 현실적인 레시피를 만들어주세요.
+            5. 모든 내용은 한국어로 작성해주세요.
+            """)
+    
+    session = LanguageModelSession(instructions: instructions)
+  }
+  
+  @MainActor
+  private func performRecipeGeneration() async {
     isLoading = true
     errorMessage = nil
     generatedRecipe = nil
     
-    Task { @MainActor in
-      do {
-        let session = LanguageModelSession()
-        
-        // 모델에 대한 지침(Instructions) 설정. 지침은 프롬프트보다 우선하여 모델의 행동을 유도합니다
-        let instructions = Instructions("""
-                    당신은 재료 목록을 바탕으로 실용적인 레시피를 만드는 전문 요리사입니다.
-                    레시피 이름은 매력적이고 구체적이어야 합니다.
-                    재료 목록은 항목별로 명확하게 구분되어야 합니다.
-                    조리 지침은 명확하고 따라하기 쉬운 단계별 설명으로 이루어져야 합니다.
-                    모든 문장은 한국어로 작성되어야 합니다.
-                    """)
-        
-        let sessionWithInstructions = LanguageModelSession(instructions: instructions)
-        
-        let promptString = """
-                다음 재료들을 사용하여 맛있는 요리의 레시피를 생성해 주세요: \(ingredientsInput).
-                레시피는 제목, 재료 목록, 단계별 지침, 준비 시간, 요리 시간, 제공량을 포함해야 합니다.
-                """
-        let prompt = Prompt(promptString)
-        
-        // 가이드 생성을 사용하여 정의된 Recipe 구조체로 응답을 생성합니다.
-        let response = try await sessionWithInstructions.respond(
-          to: prompt,
-          generating: Recipe.self,
-          options: .init(temperature: 0)
-        )
-        
-        // 생성된 Recipe 구조체에 접근합니다 [23].
-        generatedRecipe = response.content
-        
-        isLoading = false
-        
-      } catch let error as LanguageModelSession.GenerationError {
-        isLoading = false
-        if case .guardrailViolation = error {
-          errorMessage = "안전 가이드라인 위반: 민감하거나 부적절한 콘텐츠가 감지되었습니다. 다른 재료나 설명을 시도해 주세요."
-        } else if case .exceededContextWindowSize = error {
-          errorMessage = "컨텍스트 창 크기 초과: 재료 목록이나 프롬프트가 너무 깁니다. 더 짧게 입력해 주세요."
-        } else {
-          errorMessage = "모델 생성 오류: \(error.localizedDescription)"
-        }
-      } catch {
-        isLoading = false
-        errorMessage = "예기치 않은 오류가 발생했습니다: \(error.localizedDescription)"
+    do {
+      let cleanedIngredients = ingredientsInput.trimmingCharacters(in: .whitespacesAndNewlines)
+      let prompt = createPrompt(for: cleanedIngredients)
+      
+      guard let session = session else {
+        throw RecipeGenerationError.sessionNotAvailable
       }
+      
+      let response = try await session.respond(
+        to: prompt,
+        generating: Recipe.self,
+        options: GenerationOptions(
+          sampling: .greedy,
+          temperature: 0.3
+        )
+      )
+      
+      generatedRecipe = response.content
+      
+    } catch {
+      handleError(error)
     }
+    
+    isLoading = false
+  }
+  
+  private func createPrompt(for ingredients: String) -> Prompt {
+    Prompt("""
+            다음 재료들을 주재료로 사용하여 맛있고 실용적인 요리의 레시피를 생성해 주세요: \(ingredients)
+            
+            요구사항:
+            - 제시된 재료들을 최대한 활용하되, 필요한 기본 조미료나 부재료는 추가할 수 있습니다.
+            - 일반 가정에서 만들 수 있는 현실적인 레시피여야 합니다.
+            - 모든 단계는 구체적이고 명확해야 합니다.
+            """)
+  }
+  
+  @MainActor
+  private func handleError(_ error: Error) {
+    if let generationError = error as? LanguageModelSession.GenerationError {
+      errorMessage = switch generationError {
+      case .guardrailViolation:
+        "안전 가이드라인 위반: 적절하지 않은 내용이 감지되었습니다. 다른 재료로 시도해 주세요."
+      case .exceededContextWindowSize:
+        "입력이 너무 깁니다. 재료 목록을 더 간단하게 입력해 주세요."
+      case .unsupportedLanguageOrLocale:
+        "지원되지 않는 언어입니다. 한국어로 재료를 입력해 주세요."
+      default:
+        "레시피 생성 중 오류가 발생했습니다: \(generationError.localizedDescription)"
+      }
+    } else if let customError = error as? RecipeGenerationError {
+      errorMessage = customError.localizedDescription
+    } else {
+      errorMessage = "예기치 않은 오류가 발생했습니다. 다시 시도해 주세요."
+    }
+  }
+}
+
+// MARK: - Custom Errors
+
+enum RecipeGenerationError: LocalizedError {
+  case sessionNotAvailable
+  case invalidInput
+  
+  var errorDescription: String? {
+    switch self {
+    case .sessionNotAvailable:
+      return "세션을 사용할 수 없습니다. 앱을 다시 시작해 주세요."
+    case .invalidInput:
+      return "유효하지 않은 입력입니다."
+    }
+  }
+}
+
+// MARK: - Extensions
+extension RecipeGeneratorViewModel {
+  
+  /// 모델 상태를 다시 확인하고 세션을 재설정합니다
+  @MainActor
+  func refreshModelStatus() {
+    checkModelAvailability()
+    setupSession()
+  }
+  
+  /// 입력 검증을 수행합니다
+  func validateInput(_ input: String) -> Bool {
+    let trimmed = input.trimmingCharacters(in: .whitespacesAndNewlines)
+    return !trimmed.isEmpty && trimmed.count >= 2
+  }
+  
+  /// 재료 입력을 정리합니다
+  func sanitizeIngredients(_ input: String) -> String {
+    return input
+      .trimmingCharacters(in: .whitespacesAndNewlines)
+      .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
   }
 }
