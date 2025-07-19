@@ -9,9 +9,9 @@ import SwiftUI
 
 struct IngredientList: View {
   @State private var ingredients: [Ingredient] = [
-    Ingredient(name: "계란"),
-    Ingredient(name: "우유"),
-    Ingredient(name: "밀가루")
+    Ingredient(name: "계란", icon: .egg),
+    Ingredient(name: "우유", icon: .milk),
+    Ingredient(name: "밀가루", icon: .bread)
   ]
 
   @State private var selection = Set<UUID>()
@@ -19,7 +19,17 @@ struct IngredientList: View {
   var body: some View {
     List(selection: $selection) {
       ForEach(ingredients) { ingredient in
-        Text(ingredient.name)
+        HStack {
+          if let icon = ingredient.icon {
+            Text(icon.rawValue)
+          }
+          Text(ingredient.name)
+        }
+      }
+      .contextMenu {
+        Button("삭제", systemImage: "trash", role: .destructive) {
+
+        }
       }
     }
     .environment(\.editMode, .constant(.active))

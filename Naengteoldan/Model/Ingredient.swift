@@ -10,4 +10,5 @@ import Foundation
 struct Ingredient: Identifiable, Hashable {
   var id = UUID()
   var name: String
+  var icon: IngredientIcon?
 }
