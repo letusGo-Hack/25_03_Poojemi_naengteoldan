@@ -34,6 +34,7 @@ struct IngredientsView: View {
         .scaleEffect(animateCards ? 1 : 0.5)
         .opacity(animateCards ? 1 : 0)
         .animation(DesignSystem.Animation.spring.delay(Double(index) * 0.1), value: animateCards)
+        
       }
     }
   }

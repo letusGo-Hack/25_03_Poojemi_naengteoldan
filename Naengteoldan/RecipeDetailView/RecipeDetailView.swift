@@ -19,8 +19,6 @@ struct RecipeDetailView: View {
         
         // 메인 콘텐츠
         recipeSectionsView
-        .padding(.horizontal, DesignSystem.Spacing.extraLarge)
-        .padding(.vertical, DesignSystem.Spacing.huge)
         .background(
           Rectangle()
             .fill(Color(.systemBackground))
@@ -41,7 +39,7 @@ struct RecipeDetailView: View {
       withAnimation(DesignSystem.Animation.springSlow.delay(0.3)) {
         animateCards = true
       }
-    }.padding(.bottom, 12)
+    }
   }
   
   
@@ -62,17 +60,21 @@ struct RecipeDetailView: View {
     }
     .scaleEffect(animateCards ? 1 : 0.8)
     .opacity(animateCards ? 1 : 0)
+//    .padding()
   }
   
   // MARK: - Recipe Sections View
   private var recipeSectionsView: some View {
     ScrollView {
       cookingInfoCards
+        .padding(.top)
+        .padding(.horizontal)
+        .padding(.bottom, 8)
       
       LazyVStack(spacing: DesignSystem.Spacing.huge, pinnedViews: [.sectionHeaders]) {
         // 재료 섹션
         Section {
-          IngredientsView(ingredients: recipe.ingredients, animateCards: animateCards)
+          IngredientsView(ingredients: recipe.ingredients, animateCards: animateCards).padding(.horizontal, DesignSystem.Spacing.medium)
         } header: {
           SectionHeader(
             title: "재료",
@@ -81,9 +83,10 @@ struct RecipeDetailView: View {
           )
         }
         
+        
         // 조리법 섹션
         Section {
-          InstructionsView(instructions: recipe.instructions, animateCards: animateCards)
+          InstructionsView(instructions: recipe.instructions, animateCards: animateCards).padding(.horizontal, DesignSystem.Spacing.medium)
         } header: {
           SectionHeader(
             title: "조리법",
@@ -93,7 +96,7 @@ struct RecipeDetailView: View {
         }
       }
     }
-    .frame(height: DesignSystem.Size.tabContentHeight)
+    .scrollIndicators(.hidden)
     .scaleEffect(animateCards ? 1 : 0.8)
     .opacity(animateCards ? 1 : 0)
   }
@@ -120,14 +123,10 @@ struct SectionHeader: View {
     .padding(.horizontal, DesignSystem.Spacing.extraLarge)
     .padding(.vertical, DesignSystem.Spacing.large)
     .background(
-      DesignSystem.Colors.liquidGlassSelectedBackground
-        .overlay(
-          Rectangle()
-            .stroke(DesignSystem.Colors.liquidGlassBorder, lineWidth: 1)
-        )
+      DesignSystem.Colors.sectionHeaderBackground.opacity(0.2)
     )
     .shadow(
-      color: DesignSystem.Colors.shadowColor.opacity(0.1),
+      color: DesignSystem.Colors.shadowColor,
       radius: DesignSystem.Shadow.card.radius,
       x: DesignSystem.Shadow.card.x,
       y: DesignSystem.Shadow.card.y

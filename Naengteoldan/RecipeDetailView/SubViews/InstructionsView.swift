@@ -24,7 +24,8 @@ struct InstructionsView: View {
             Text("\(index + 1)")
               .font(DesignSystem.Typography.stepNumber)
               .foregroundColor(.white)
-          }
+            
+          }.glassEffect()
           
           Text(instruction)
             .font(DesignSystem.Typography.body)

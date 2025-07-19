@@ -79,30 +79,73 @@ enum DesignSystem {
       endPoint: .bottomTrailing
     )
     
-    // Liquid Glass Effects
-    static let liquidGlassBackground = Color.white.opacity(0.15)
-    static let liquidGlassBorder = Color.white.opacity(0.25)
-    static let liquidGlassSelectedBackground = LinearGradient(
-      colors: [
-        Color.white.opacity(0.3),
-        Color.white.opacity(0.1)
-      ],
-      startPoint: .topLeading,
-      endPoint: .bottomTrailing
-    )
+    // Adaptive Liquid Glass Effects
+    static var liquidGlassBackground: Color {
+      Color.primary.opacity(0.08)
+    }
     
-    // Semantic Colors
-    static let cardBackground = Color.gray.opacity(0.1)
-    static let whiteOverlay = Color.white.opacity(0.1)
-    static let shadowColor = Color.black.opacity(0.3)
+    static var liquidGlassBorder: Color {
+      Color.primary.opacity(0.15)
+    }
     
-    // Feature Colors
-    static let ingredientBackground = Color.green.opacity(0.1)
-    static let ingredientBorder = Color.green.opacity(0.3)
-    static let instructionBackground = Color.blue.opacity(0.05)
-    static let instructionBorder = Color.blue.opacity(0.2)
+    static var liquidGlassSelectedBackground: LinearGradient {
+      LinearGradient(
+        colors: [
+          Color.primary.opacity(0.2),
+          Color.primary.opacity(0.1)
+        ],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+      )
+    }
     
-    // Info Card Colors
+    // Adaptive Semantic Colors
+    static var cardBackground: Color {
+      Color(.systemGray6)
+    }
+    
+    static var whiteOverlay: Color {
+      Color.white.opacity(0.05)
+    }
+    
+    static var shadowColor: Color {
+      Color(.systemGray).opacity(0.3)
+    }
+    
+    // Adaptive Feature Colors
+    static var ingredientBackground: Color {
+      Color.green.opacity(0.1)
+    }
+    
+    static var ingredientBorder: Color {
+      Color.green.opacity(0.3)
+    }
+    
+    static var instructionBackground: Color {
+      Color.blue.opacity(0.05)
+    }
+    
+    static var instructionBorder: Color {
+      Color.blue.opacity(0.2)
+    }
+    
+    // Adaptive Section Header Colors
+    static var sectionHeaderBackground: LinearGradient {
+      LinearGradient(
+        colors: [
+          Color.green.opacity(0.8),
+          Color.yellow.opacity(0.6)
+        ],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+      )
+    }
+    
+    static var sectionHeaderBorder: Color {
+      Color.accentColor.opacity(0.3)
+    }
+    
+    // Info Card Colors (keep vibrant)
     static let purpleCard = Color.purple
     static let redCard = Color.red
     static let blueCard = Color.blue
@@ -110,7 +153,9 @@ enum DesignSystem {
   
   // MARK: - Shadows
   enum Shadow {
-    static let text = (color: Color.black.opacity(0.3), radius: CGFloat(2), x: CGFloat(1), y: CGFloat(1))
+    static var text: (color: Color, radius: CGFloat, x: CGFloat, y: CGFloat) {
+      (color: Color.primary.opacity(0.3), radius: CGFloat(2), x: CGFloat(1), y: CGFloat(1))
+    }
     static let card = (radius: CGFloat(8), x: CGFloat(0), y: CGFloat(4))
   }
   

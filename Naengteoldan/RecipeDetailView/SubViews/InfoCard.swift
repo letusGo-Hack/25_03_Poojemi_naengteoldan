@@ -31,7 +31,7 @@ struct InfoCard: View {
     .background(
       RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.medium)
         .fill(color.opacity(DesignSystem.Opacity.overlay))
-        .stroke(color.opacity(DesignSystem.Opacity.border), lineWidth: 1)
+        .stroke(color.opacity(DesignSystem.Opacity.border), lineWidth: 1).glassEffect(.regular, in: .rect, isEnabled: false)
     )
   }
 }
