@@ -12,7 +12,7 @@ struct ContentView: View {
   
   var body: some View {
     NavigationStack {
-      AddIngredientView(modelData: modelData)
+      IngredientListView(modelData: modelData)
         .allowsHitTesting(!modelData.isLoading)
         .overlay {
           LoadingView(isReceiptReady: $modelData.isLoading)

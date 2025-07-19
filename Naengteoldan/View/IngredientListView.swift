@@ -1,5 +1,5 @@
 //
-//  AddIngredientView.swift
+//  IngredientListView.swift
 //  Naengteoldan
 //
 //  Created by COMI on 7/19/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct AddIngredientView: View {
+struct IngredientListView: View {
   @Bindable var modelData: RecipeGeneratorViewModel
 
   private let columns = Array(repeating: GridItem(spacing: 16), count: 3)
