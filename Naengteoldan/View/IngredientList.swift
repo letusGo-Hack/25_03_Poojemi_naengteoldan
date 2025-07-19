@@ -23,6 +23,7 @@ struct IngredientList: View {
   ]
 
   @State private var selection = Set<UUID>()
+  @State private var isAddIngredientViewPresented = false
 
   var body: some View {
     ScrollView {
@@ -70,8 +71,13 @@ struct IngredientList: View {
     .toolbar {
       ToolbarItem(placement: .primaryAction) {
         Button("추가", systemImage: "plus") {
-
+          isAddIngredientViewPresented = true
         }
+      }
+    }
+    .sheet(isPresented: $isAddIngredientViewPresented) {
+      NavigationStack {
+        AddIngredientView()
       }
     }
   }
