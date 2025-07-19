@@ -1,5 +1,5 @@
 //
-//  RecipeOutputView.swift
+//  RecipeItemOutputView.swift
 //  Naengteoldan
 //
 //  Created by COMI on 7/19/25.
@@ -7,11 +7,11 @@
 
 import SwiftUI
 
-struct RecipeOutputView: View {
-    let recipe: Recipe
+struct RecipeItemOutputView: View {
+    let recipe: RecipeItem
     @State private var isFavorite: Bool
     
-    init(recipe: Recipe) {
+    init(recipe: RecipeItem) {
         self.recipe = recipe
         self._isFavorite = State(initialValue: recipe.isFavorite)
     }
@@ -127,7 +127,7 @@ struct RecipeOutputView: View {
 
 #Preview {
     NavigationStack {
-        RecipeOutputView(recipe: Recipe(
+        RecipeItemOutputView(recipe: RecipeItem(
             id: 1,
             title: "계란말이",
             description: "계란말이, 또는 달걀말이는 달걀을 팬에 얇고 넓게 부친 뒤 만 음식이다. 반찬이나 술안주로 먹는다.",
