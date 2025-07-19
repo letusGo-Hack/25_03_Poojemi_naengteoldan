@@ -8,34 +8,34 @@
 import SwiftUI
 
 struct AddIngredientView: View {
-  @Binding var ingredients: [Ingredient]
+  @Bindable var modelData: RecipeGeneratorViewModel
 
   private let columns = Array(repeating: GridItem(spacing: 16), count: 3)
+
   @State private var searchText = ""
   @State private var selection = Set<IngredientIcon>()
-  @Environment(\.dismiss) private var dismiss
 
-  private var icons: [IngredientIcon] {
+  private var ingredients: [IngredientIcon] {
     if searchText.isEmpty {
       IngredientIcon.allCases
     } else {
       IngredientIcon.allCases.filter {
         $0.name.localizedCaseInsensitiveContains(searchText)
-        //        $0.name.lowercased().contains(searchText.lowercased())
+        // $0.name.lowercased().contains(searchText.lowercased())
       }
     }
   }
 
   var body: some View {
     ZStack {
-      if icons.isEmpty {
+      if ingredients.isEmpty {
         Text("검색 결과가 없습니다.")
           .frame(maxWidth: .infinity, maxHeight: .infinity)
           .foregroundStyle(.secondary)
       } else {
         ScrollView {
           LazyVGrid(columns: columns, spacing: 16) {
-            ForEach(icons, id: \.hashValue) { icon in
+            ForEach(ingredients, id: \.hashValue) { icon in
               ingredientButton(icon)
             }
           }
@@ -45,7 +45,7 @@ struct AddIngredientView: View {
       }
     }
     .safeAreaInset(edge: .bottom) {
-      addButton
+      generateRecipeButton
         .padding(.horizontal, 16)
         .opacity(selection.isEmpty ? 0 : 1)
         .offset(y: selection.isEmpty ? 100 : 0)
@@ -54,11 +54,7 @@ struct AddIngredientView: View {
     .safeAreaInset(edge: .top) {
       searchField
         .padding(.horizontal, 16)
-        .padding(.top, 16 + 8)
     }
-    .frame(maxHeight: .infinity)
-    .presentationDetents([.large])
-    .presentationDragIndicator(.visible)
   }
 
   @ViewBuilder
@@ -99,34 +95,29 @@ struct AddIngredientView: View {
       .glassEffect()
   }
 
-  private var addButton: some View {
+  private var generateRecipeButton: some View {
     Button {
-      let newIngredients = selection.map {
-        Ingredient(name: $0.name, icon: $0)
+      print(selection)
+      Task {
+        await self.modelData.performRecipeGeneration(gradient: selection.map { $0.name })
       }
-      ingredients.append(contentsOf: newIngredients)
-      dismiss()
     } label: {
-      Text("재료 추가")
+      Label("AI 레시피 추천", systemImage: "apple.intelligence")
+        .foregroundStyle(
+          MeshGradient(width: 2, height: 2, points: [
+            [0, 0], [1, 0],
+            [0, 1], [1, 1]
+          ], colors: [
+            .pink, .indigo,
+            .indigo, .blue
+          ])
+        )
         .fontWeight(.semibold)
-        .padding(16)
+        .padding(8)
         .frame(maxWidth: .infinity)
-        .foregroundStyle(.white)
-        .glassEffect(.regular.interactive().tint(.accentColor))
     }
+    .buttonStyle(.glass)
     // .buttonStyle(.plain) // plain 금지
   }
 }
-
-#Preview(traits: .sizeThatFitsLayout) {
-  @Previewable @State var isPresented = true
-
-  VStack {
-
-  }
-  .sheet(isPresented: .constant(true)) {
-    AddIngredientView(ingredients: .constant([]))
-  }
-}
-
 
