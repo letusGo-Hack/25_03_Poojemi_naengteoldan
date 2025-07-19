@@ -57,7 +57,7 @@ class RecipeGeneratorViewModel {
         generating: RecipeItem.self,
         options: GenerationOptions(
           sampling: .greedy,
-          temperature: 0.3
+          temperature: 0.5
         )
       )
       
@@ -65,7 +65,8 @@ class RecipeGeneratorViewModel {
       
       print("result ~> \(generatedRecipe)")
     } catch {
-      handleError(error)
+      print(error)
+      self.errorMessage = "정상적이지 않은 재료입니다. 다시 선택해주세요."
       clearResults()
     }
     
@@ -101,10 +102,10 @@ class RecipeGeneratorViewModel {
             당신은 재료 목록을 바탕으로 실용적이고 맛있는 레시피를 만드는 전문 요리사입니다.
             
             다음 규칙을 따라 레시피를 생성해주세요:
-            1. 레시피 이름은 매력적이고 구체적이어야 합니다.
+            1. 레시피 이름은 매력적이고 추상적이어야 합니다.
             2. 재료 목록은 정확한 양과 함께 명시해주세요.
             3. 조리 지침은 명확하고 따라하기 쉬운 단계별 설명으로 작성해주세요.
-            4. 실제 조리 가능한 현실적인 레시피를 만들어주세요.
+            4. 반드시 주어진 재료로만 만들어야 합니다.
             5. 모든 내용은 한국어로 작성해주세요.
             """)
     
@@ -116,7 +117,7 @@ class RecipeGeneratorViewModel {
             다음 재료들을 주재료로 사용하여 맛있고 실용적인 요리의 레시피를 생성해 주세요: \(ingredients)
             
             요구사항:
-            - 제시된 재료들을 최대한 활용하되, 필요한 기본 조미료나 부재료는 추가할 수 있습니다.
+            - 제시된 재료만을 가지고 만들어야 합니다.
             - 일반 가정에서 만들 수 있는 현실적인 레시피여야 합니다.
             - 모든 단계는 구체적이고 명확해야 합니다.
             """)
