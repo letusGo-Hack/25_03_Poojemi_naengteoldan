@@ -8,17 +8,19 @@
 import SwiftUI
 
 struct RecipeDetailView: View {
-  let recipe: Recipe
+  let recipe: RecipeItem
   @State private var animateHeader = false
   @State private var animateCards = false
   
   var body: some View {
     VStack {
       VStack(spacing: 0) {
-        HeaderSection(recipeName: recipe.name, animateHeader: animateHeader)
+        HeaderSection(recipeName: recipe.title, animateHeader: animateHeader)
         
         // 메인 콘텐츠
         recipeSectionsView
+        .padding(.horizontal, DesignSystem.Spacing.extraLarge)
+        .padding(.vertical, DesignSystem.Spacing.huge)
         .background(
           Rectangle()
             .fill(Color(.systemBackground))
@@ -39,7 +41,7 @@ struct RecipeDetailView: View {
       withAnimation(DesignSystem.Animation.springSlow.delay(0.3)) {
         animateCards = true
       }
-    }
+    }.padding(.bottom, 12)
   }
   
   
@@ -60,21 +62,17 @@ struct RecipeDetailView: View {
     }
     .scaleEffect(animateCards ? 1 : 0.8)
     .opacity(animateCards ? 1 : 0)
-//    .padding()
   }
   
   // MARK: - Recipe Sections View
   private var recipeSectionsView: some View {
     ScrollView {
       cookingInfoCards
-        .padding(.top)
-        .padding(.horizontal)
-        .padding(.bottom, 8)
       
       LazyVStack(spacing: DesignSystem.Spacing.huge, pinnedViews: [.sectionHeaders]) {
         // 재료 섹션
         Section {
-          IngredientsView(ingredients: recipe.ingredients, animateCards: animateCards).padding(.horizontal, DesignSystem.Spacing.medium)
+          IngredientsView(ingredients: recipe.ingredients, animateCards: animateCards)
         } header: {
           SectionHeader(
             title: "재료",
@@ -83,10 +81,9 @@ struct RecipeDetailView: View {
           )
         }
         
-        
         // 조리법 섹션
         Section {
-          InstructionsView(instructions: recipe.instructions, animateCards: animateCards).padding(.horizontal, DesignSystem.Spacing.medium)
+          InstructionsView(instructions: recipe.directions, animateCards: animateCards)
         } header: {
           SectionHeader(
             title: "조리법",
@@ -96,7 +93,7 @@ struct RecipeDetailView: View {
         }
       }
     }
-    .scrollIndicators(.hidden)
+    .frame(height: DesignSystem.Size.tabContentHeight)
     .scaleEffect(animateCards ? 1 : 0.8)
     .opacity(animateCards ? 1 : 0)
   }
@@ -123,10 +120,14 @@ struct SectionHeader: View {
     .padding(.horizontal, DesignSystem.Spacing.extraLarge)
     .padding(.vertical, DesignSystem.Spacing.large)
     .background(
-      DesignSystem.Colors.sectionHeaderBackground.opacity(0.2)
+      DesignSystem.Colors.liquidGlassSelectedBackground
+        .overlay(
+          Rectangle()
+            .stroke(DesignSystem.Colors.liquidGlassBorder, lineWidth: 1)
+        )
     )
     .shadow(
-      color: DesignSystem.Colors.shadowColor,
+      color: DesignSystem.Colors.shadowColor.opacity(0.1),
       radius: DesignSystem.Shadow.card.radius,
       x: DesignSystem.Shadow.card.x,
       y: DesignSystem.Shadow.card.y
@@ -134,37 +135,4 @@ struct SectionHeader: View {
     .scaleEffect(animateCards ? 1 : 0.8)
     .opacity(animateCards ? 1 : 0)
   }
-}
-
-struct SampleView: View {
-  var body: some View {
-    RecipeDetailView(recipe: Recipe(
-      name: "매콤한 제육볶음",
-      ingredients: [
-        "대패삼겹살 300g",
-        "대파 2대",
-        "양파 1개",
-        "설탕 1큰술",
-        "고추장 2큰술",
-        "간장 1큰술",
-        "마늘 3쪽",
-        "생강 1조각"
-      ],
-      instructions: [
-        "대패삼겹살을 한입 크기로 자르고, 양파와 대파도 적당한 크기로 썰어주세요.",
-        "마늘과 생강을 다져서 준비해주세요.",
-        "팬에 기름을 두르고 중불에서 대패삼겹살을 볶아주세요.",
-        "고기가 익으면 마늘, 생강, 양파를 넣고 함께 볶아주세요.",
-        "고추장, 간장, 설탕을 넣고 골고루 섞어가며 볶아주세요.",
-        "마지막에 대파를 넣고 살짝 볶아 완성해주세요.마지막에 대파를 넣고 살짝 볶아 완성해주세요.마지막에 대파를 넣고 살짝 볶아 완성해주세요.마지막에 대파를 넣고 살짝 볶아 완성해주세요.마지막에 대파를 넣고 살짝 볶아 완성해주세요.마지막에 대파를 넣고 살짝 볶아 완성해주세요.마지막에 대파를 넣고 살짝 볶아 완성해주세요."
-      ],
-      prepTime: "15분",
-      cookTime: "20분",
-      servings: "2-3인분"
-    ))
-  }
-}
-
-#Preview {
-  SampleView()
 }

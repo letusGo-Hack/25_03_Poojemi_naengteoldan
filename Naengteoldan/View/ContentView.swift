@@ -13,10 +13,12 @@ struct ContentView: View {
   var body: some View {
     TabView {
       Tab {
-        if let generatedRecipe = modelData.generatedRecipe {
-          RecipeDetailView(recipe: generatedRecipe)
-        } else {
-          IngredientListView(modelData: modelData)
+        NavigationStack {
+          if let generatedRecipe = modelData.generatedRecipe {
+            RecipeDetailView(recipe: generatedRecipe)
+          } else {
+            IngredientListView(modelData: modelData)
+          }
         }
       } label: {
         Label("냉장고", systemImage: "refrigerator")
