@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct AddIngredientView: View {
+  @Binding var ingredients: [Ingredient]
+
   @State private var name = ""
   @State private var icon: IngredientIcon?
   @Environment(\.dismiss) private var dismiss
@@ -39,6 +41,7 @@ struct AddIngredientView: View {
       .padding(.horizontal, 16)
 
       Button {
+        ingredients.append(Ingredient(name: name, icon: icon))
         dismiss()
       } label: {
         Text("재료 추가")
@@ -59,5 +62,5 @@ struct AddIngredientView: View {
 }
 
 #Preview {
-  AddIngredientView()
+  AddIngredientView(ingredients: .constant([]))
 }

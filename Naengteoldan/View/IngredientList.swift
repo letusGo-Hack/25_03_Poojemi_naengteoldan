@@ -77,7 +77,7 @@ struct IngredientList: View {
     }
     .sheet(isPresented: $isAddIngredientViewPresented) {
       NavigationStack {
-        AddIngredientView()
+        AddIngredientView(ingredients: $ingredients)
       }
     }
   }
