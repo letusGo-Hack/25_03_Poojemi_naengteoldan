@@ -43,6 +43,7 @@ struct IngredientListView: View {
           .padding(16)
         }
         .scrollIndicators(.hidden)
+        .scrollDismissesKeyboard(.interactively)
       }
     }
     .safeAreaInset(edge: .bottom) {
@@ -55,6 +56,11 @@ struct IngredientListView: View {
     .safeAreaInset(edge: .top) {
       searchField
         .padding(.horizontal, 16)
+    }
+    .toolbar {
+      ToolbarItem(placement: .keyboard) {
+        Spacer()
+      }
     }
     .confirmationDialog(
       "오류가 발생하였습니다.",
