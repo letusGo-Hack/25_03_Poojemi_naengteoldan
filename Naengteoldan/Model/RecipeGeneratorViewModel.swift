@@ -59,7 +59,7 @@ class RecipeGeneratorViewModel {
         generating: RecipeItem.self,
         options: GenerationOptions(
           sampling: .greedy,
-          temperature: 0
+          temperature: 0.4
         )
       )
       

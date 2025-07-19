@@ -99,3 +99,7 @@ struct SectionHeader: View {
     .opacity(animateCards ? 1 : 0)
   }
 }
+
+#Preview {
+  RecipeDetailView(recipe: RecipeItem(title: "title", description: "de", category: .bakery, ingredients: ["a", "b"], directions: ["1", "2"], prepTime: "10분", cookTime: "10분", servings: "2인분"), modelData: RecipeGeneratorViewModel())
+}
