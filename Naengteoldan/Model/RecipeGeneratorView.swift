@@ -25,7 +25,9 @@ struct RecipeGeneratorView: View {
           .padding(.horizontal)
           .autocorrectionDisabled()
         
-        Button(action: viewModel.generateRecipe) {
+        Button(action: {
+          Task { await viewModel.generateRecipe() }
+        }) {
           Text(viewModel.isLoading ? "레시피 생성 중..." : "레시피 생성")
             .font(.headline)
             .padding()
@@ -91,3 +93,4 @@ struct RecipeGeneratorView: View {
     }
   }
 }
+
