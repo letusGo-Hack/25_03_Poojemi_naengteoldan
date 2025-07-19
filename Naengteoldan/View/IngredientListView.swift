@@ -107,7 +107,6 @@ struct IngredientListView: View {
           .regular.interactive().tint(.accentColor) :
             .regular.interactive())
     }
-    // .buttonStyle(.plain) // plain 금지
   }
 
   private var searchField: some View {
@@ -121,6 +120,7 @@ struct IngredientListView: View {
   private var generateRecipeButton: some View {
     Button {
       print(selection)
+      modelData.userSelectedIngredient = selection.map { Ingredient(name: $0.name, icon: $0) }
       Task {
         await self.modelData.performRecipeGeneration(gradient: selection.map { $0.name })
       }

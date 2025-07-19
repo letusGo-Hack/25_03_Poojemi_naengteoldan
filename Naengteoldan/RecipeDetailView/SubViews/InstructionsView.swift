@@ -29,6 +29,7 @@ struct InstructionsView: View {
           Text(instruction)
             .font(DesignSystem.Typography.body)
             .foregroundColor(.primary)
+            .multilineTextAlignment(.leading)
             .lineLimit(nil)
           
           Spacer(minLength: 0)
