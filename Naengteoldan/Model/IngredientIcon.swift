@@ -7,17 +7,17 @@
 
 enum IngredientIcon: String, CaseIterable {
   // 과일
-  case apple = "🍎"
-  case orange = "🍊"
-  case banana = "🍌"
-  case watermelon = "🍉"
-  case grape = "🍇"
-  case strawberry = "🍓"
-  case cherry = "🍒"
-  case pineapple = "🍍"
-  case peach = "🍑"
-  case kiwi = "🥝"
-  case coconut = "🥥"
+//  case apple = "🍎"
+//  case orange = "🍊"
+//  case banana = "🍌"
+//  case watermelon = "🍉"
+//  case grape = "🍇"
+//  case strawberry = "🍓"
+//  case cherry = "🍒"
+//  case pineapple = "🍍"
+//  case peach = "🍑"
+//  case kiwi = "🥝"
+//  case coconut = "🥥"
 
   // 채소
   case carrot = "🥕"
