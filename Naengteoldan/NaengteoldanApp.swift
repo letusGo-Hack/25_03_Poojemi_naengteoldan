@@ -11,7 +11,7 @@ import SwiftUI
 struct NaengteoldanApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+          RecipeGeneratorView()
         }
     }
 }
