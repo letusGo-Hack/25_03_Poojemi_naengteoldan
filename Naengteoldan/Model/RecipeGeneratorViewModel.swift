@@ -13,8 +13,6 @@ import FoundationModels
 class RecipeGeneratorViewModel {
   
   // MARK: - Public Properties
-  
-  var ingredientsInput: String = ""
   var generatedRecipe: Recipe?
   var isLoading: Bool = false
   var errorMessage: String?
@@ -31,10 +29,6 @@ class RecipeGeneratorViewModel {
     systemLanguageModel.availability == .available
   }
   
-  var canGenerateRecipe: Bool {
-    isModelAvailable && !ingredientsInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !isLoading
-  }
-  
   // MARK: - Initialization
   
   init() {
@@ -45,28 +39,41 @@ class RecipeGeneratorViewModel {
   // MARK: - Public Methods
   
   @MainActor
-  func generateRecipe() async {
-    guard canGenerateRecipe else {
-      if !isModelAvailable {
-        errorMessage = modelAvailabilityStatus
-      } else if ingredientsInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-        errorMessage = "재료를 입력해주세요."
+  func performRecipeGeneration(gradient: [String]) async {
+    isLoading = true
+    errorMessage = nil
+    generatedRecipe = nil
+    
+    do {
+      let cleanedIngredients = gradient.joined(separator: ",").trimmingCharacters(in: .whitespacesAndNewlines)
+      let prompt = createPrompt(for: cleanedIngredients)
+      
+      guard let session = session else {
+        throw RecipeGenerationError.sessionNotAvailable
       }
-      return
+      
+      let response = try await session.respond(
+        to: prompt,
+        generating: Recipe.self,
+        options: GenerationOptions(
+          sampling: .greedy,
+          temperature: 0.3
+        )
+      )
+      
+      generatedRecipe = response.content
+    } catch {
+      handleError(error)
+      clearResults()
     }
     
-    await performRecipeGeneration()
+    isLoading = false
   }
   
   @MainActor
   func clearResults() {
     generatedRecipe = nil
     errorMessage = nil
-  }
-  
-  @MainActor
-  func retryGeneration() async {
-    await generateRecipe()
   }
   
   // MARK: - Private Methods
@@ -100,38 +107,6 @@ class RecipeGeneratorViewModel {
             """)
     
     session = LanguageModelSession(instructions: instructions)
-  }
-  
-  @MainActor
-  private func performRecipeGeneration() async {
-    isLoading = true
-    errorMessage = nil
-    generatedRecipe = nil
-    
-    do {
-      let cleanedIngredients = ingredientsInput.trimmingCharacters(in: .whitespacesAndNewlines)
-      let prompt = createPrompt(for: cleanedIngredients)
-      
-      guard let session = session else {
-        throw RecipeGenerationError.sessionNotAvailable
-      }
-      
-      let response = try await session.respond(
-        to: prompt,
-        generating: Recipe.self,
-        options: GenerationOptions(
-          sampling: .greedy,
-          temperature: 0.3
-        )
-      )
-      
-      generatedRecipe = response.content
-      
-    } catch {
-      handleError(error)
-    }
-    
-    isLoading = false
   }
   
   private func createPrompt(for ingredients: String) -> Prompt {

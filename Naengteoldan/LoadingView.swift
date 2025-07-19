@@ -9,25 +9,11 @@ import SwiftUI
 
 struct LoadingView: View {
   
-  @State private var isReceiptReady: Bool = true
+  @Binding var isReceiptReady: Bool
   
   var body: some View {
     if isReceiptReady {
       LoadingAnimationView(isLoadingFinished: $isReceiptReady)
-        .task {
-          try? await Task.sleep(for: .seconds(5))
-          withAnimation {
-            isReceiptReady = false
-          }
-        }
-    } else {
-      Text("준비완료!")
-        .task {
-          try? await Task.sleep(for: .seconds(5))
-          withAnimation {
-            isReceiptReady = true
-          }
-        }
     }
   }
 }

@@ -49,9 +49,9 @@ struct AddIngredientView: View {
           .padding(.vertical, 8)
           .frame(maxWidth: .infinity)
       }
-      .buttonStyle(.glassProminent)
+      .buttonStyle(.glass)
       .padding(.horizontal, 16)
-//      .disabled(name.isEmpty)
+      .disabled(name.isEmpty)
     }
     .frame(maxHeight: .infinity)
     .padding(.vertical, 16)
@@ -61,6 +61,3 @@ struct AddIngredientView: View {
   }
 }
 
-#Preview {
-  AddIngredientView(ingredients: .constant([]))
-}

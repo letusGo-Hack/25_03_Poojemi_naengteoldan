@@ -11,9 +11,7 @@ struct ContentView: View {
   var body: some View {
     TabView {
       Tab {
-        NavigationStack {
-          IngredientList()
-        }
+        IngredientListView()
       } label: {
         Label("냉장고", systemImage: "refrigerator")
       }

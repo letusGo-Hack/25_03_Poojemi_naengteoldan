@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct IngredientList: View {
+struct IngredientListView: View {
   @State private var ingredients: [Ingredient] = [
     Ingredient(name: "계란", icon: .egg),
     Ingredient(name: "우유", icon: .milk),
@@ -24,50 +24,21 @@ struct IngredientList: View {
 
   @State private var selection = Set<Ingredient>()
   @State private var isAddIngredientViewPresented = false
+  
+//  @State var isShowLoading: Bool = false
+  @State var modelData = RecipeGeneratorViewModel()
 
   var body: some View {
     ScrollView {
       LazyVGrid(columns: Array(repeating: GridItem(spacing: 16), count: 3), spacing: 16) {
         ForEach(ingredients) { ingredient in
-          Button {
-            if selection.contains(ingredient) {
-              selection.remove(ingredient)
-            } else {
-              selection.insert(ingredient)
-            }
-          } label: {
-            VStack(spacing: 4) {
-              if let icon = ingredient.icon {
-                Text(icon.rawValue)
-                  .font(.system(size: 32))
-              }
-              Text(ingredient.name)
-                .foregroundStyle(selection.contains(ingredient) ? .white : .secondary)
-                .font(.system(size: 14))
-                .frame(maxWidth: .infinity)
-            }
-            .padding(12)
-          }
-          .glassEffect(
-            selection.contains(ingredient) ?
-              .regular.interactive().tint(.accentColor) :
-                .regular.interactive()
-          )
-          .buttonStyle(.plain)
+          IngredientListItem(ingredient: ingredient, selection: $selection)
         }
       }
       .padding(16)
     }
     .background(
       Color(uiColor: .systemGroupedBackground)
-//      MeshGradient(width: 2, height: 2, points: [
-//        [0, 0], [1, 0],
-//        [0, 1], [1, 1]
-//      ], colors: [
-//        .pink, .indigo,
-//        .indigo, .blue
-//      ])
-//      .ignoresSafeArea()
     )
     .safeAreaBar(edge: .bottom) {
       recipeGenerateButton
@@ -87,11 +58,19 @@ struct IngredientList: View {
         AddIngredientView(ingredients: $ingredients)
       }
     }
+    .opacity(modelData.isLoading ? 0.2 : 1)
+    .animation(.easeInOut, value: modelData.isLoading)
+    .overlay {
+      LoadingView(isReceiptReady: $modelData.isLoading)
+    }
   }
 
   private var recipeGenerateButton: some View {
     Button(role: .confirm) {
-
+      print(selection)
+      Task {
+        await self.modelData.performRecipeGeneration(gradient: selection.map { $0.name })
+      }
     } label: {
       Label("AI 레시피 추천", systemImage: "apple.intelligence")
         .foregroundStyle(
@@ -110,6 +89,3 @@ struct IngredientList: View {
   }
 }
 
-#Preview {
-  ContentView()
-}
