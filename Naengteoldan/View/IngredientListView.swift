@@ -14,6 +14,7 @@ struct IngredientListView: View {
 
   @State private var searchText = ""
   @State private var selection = Set<IngredientIcon>()
+  @State private var isErrorDialogPresented = false
 
   private var ingredients: [IngredientIcon] {
     if searchText.isEmpty {
@@ -55,6 +56,22 @@ struct IngredientListView: View {
       searchField
         .padding(.horizontal, 16)
     }
+    .confirmationDialog(
+      "오류가 발생하였습니다.",
+      isPresented: $isErrorDialogPresented,
+      titleVisibility: .visible) {
+        Button("확인") {
+          isErrorDialogPresented = false
+        }
+      } message: {
+        Text(modelData.errorMessage ?? "")
+      }
+      .onChange(of: modelData.errorMessage) { _, newValue in
+        print("에러 발생")
+        if newValue != nil {
+          isErrorDialogPresented = true
+        }
+      }
   }
 
   @ViewBuilder

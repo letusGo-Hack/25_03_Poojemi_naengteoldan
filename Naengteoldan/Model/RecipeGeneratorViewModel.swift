@@ -57,7 +57,7 @@ class RecipeGeneratorViewModel {
         generating: RecipeItem.self,
         options: GenerationOptions(
           sampling: .greedy,
-          temperature: 0.5
+          temperature: 0
         )
       )
       
@@ -66,8 +66,8 @@ class RecipeGeneratorViewModel {
       print("result ~> \(generatedRecipe)")
     } catch {
       print(error)
-      self.errorMessage = "정상적이지 않은 재료입니다. 다시 선택해주세요."
-      clearResults()
+      self.errorMessage = error.localizedDescription
+//      clearResults()
     }
     
     isLoading = false
