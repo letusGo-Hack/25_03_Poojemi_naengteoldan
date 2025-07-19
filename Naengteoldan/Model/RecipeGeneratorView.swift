@@ -10,7 +10,7 @@ import Combine
 import FoundationModels
 
 struct RecipeGeneratorView: View {
-  @StateObject private var viewModel = RecipeGeneratorViewModel()
+  @State private var viewModel = RecipeGeneratorViewModel()
   
   var body: some View {
     NavigationView {
@@ -34,7 +34,7 @@ struct RecipeGeneratorView: View {
             .foregroundColor(.white)
             .cornerRadius(10)
         }
-        .disabled(viewModel.isLoading || viewModel.ingredientsInput.isEmpty || viewModel.systemLanguageModel.availability != .available)
+        .disabled(viewModel.isLoading || viewModel.ingredientsInput.isEmpty)
         .padding(.horizontal)
         
         if let recipe = viewModel.generatedRecipe {
