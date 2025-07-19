@@ -20,7 +20,7 @@ struct ContentView: View {
             .ignoresSafeArea()
         }
         .sheet(item: $modelData.generatedRecipe) { recipe in
-          RecipeDetailView(recipe: recipe)
+          RecipeDetailView(recipe: recipe, modelData: modelData)
             .presentationDragIndicator(.visible)
         }
     }

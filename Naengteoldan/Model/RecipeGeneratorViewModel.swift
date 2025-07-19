@@ -18,6 +18,8 @@ class RecipeGeneratorViewModel {
   var errorMessage: String?
   var modelAvailabilityStatus: String = "모델 가용성 확인 중..."
   
+  var userSelectedIngredient: [Ingredient] = []
+  
   // MARK: - Private Properties
   
   private let systemLanguageModel = SystemLanguageModel.default
