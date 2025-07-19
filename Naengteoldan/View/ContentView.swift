@@ -8,10 +8,16 @@
 import SwiftUI
 
 struct ContentView: View {
+  @State var modelData = RecipeGeneratorViewModel()
+  
   var body: some View {
     TabView {
       Tab {
-        IngredientListView()
+        if let generatedRecipe = modelData.generatedRecipe {
+          RecipeDetailView(recipe: generatedRecipe)
+        } else {
+          IngredientListView(modelData: modelData)
+        }
       } label: {
         Label("냉장고", systemImage: "refrigerator")
       }
@@ -21,6 +27,9 @@ struct ContentView: View {
       } label: {
         Label("즐겨찾기", systemImage: "heart")
       }
+    }
+    .task {
+      // pre-warm model
     }
   }
 }

@@ -62,6 +62,8 @@ class RecipeGeneratorViewModel {
       )
       
       generatedRecipe = response.content
+      
+      print("result ~> \(generatedRecipe)")
     } catch {
       handleError(error)
       clearResults()

@@ -25,8 +25,7 @@ struct IngredientListView: View {
   @State private var selection = Set<Ingredient>()
   @State private var isAddIngredientViewPresented = false
   
-//  @State var isShowLoading: Bool = false
-  @State var modelData = RecipeGeneratorViewModel()
+  @Bindable var modelData: RecipeGeneratorViewModel
 
   var body: some View {
     ScrollView {
