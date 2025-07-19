@@ -14,7 +14,8 @@ struct Ingredient: Identifiable {
   let id = UUID()
   let name: String
   var isChecked: Bool = false
-  
+  var icon: IngredientIcon?
+
   var rawValue: IngredientRawValue {
     name
   }
