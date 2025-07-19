@@ -11,34 +11,62 @@ struct IngredientList: View {
   @State private var ingredients: [Ingredient] = [
     Ingredient(name: "계란", icon: .egg),
     Ingredient(name: "우유", icon: .milk),
+    Ingredient(name: "밀가루", icon: .bread),
+    Ingredient(name: "밀가루", icon: .bread),
+    Ingredient(name: "밀가루", icon: .bread),
+    Ingredient(name: "밀가루", icon: .bread),
+    Ingredient(name: "밀가루", icon: .bread),
+    Ingredient(name: "밀가루", icon: .bread),
+    Ingredient(name: "밀가루", icon: .bread),
+    Ingredient(name: "밀가루", icon: .bread),
     Ingredient(name: "밀가루", icon: .bread)
   ]
 
   @State private var selection = Set<UUID>()
 
   var body: some View {
-    List(selection: $selection) {
-      ForEach(ingredients) { ingredient in
-        HStack {
-          if let icon = ingredient.icon {
-            Text(icon.rawValue)
+    ScrollView {
+      LazyVGrid(columns: Array(repeating: GridItem(spacing: 16), count: 3), spacing: 16) {
+        ForEach(ingredients) { ingredient in
+          VStack(spacing: 4) {
+            if let icon = ingredient.icon {
+              Text(icon.rawValue)
+                .font(.system(size: 32))
+            }
+            Text(ingredient.name)
+              .foregroundStyle(.secondary)
+              .font(.system(size: 14))
+              .frame(maxWidth: .infinity)
           }
-          Text(ingredient.name)
+          .padding(12)
+          .glassEffect(in: .rect(cornerRadius: 16.0))
+          .buttonStyle(.plain)
         }
-      }
-      .contextMenu {
-        Button("삭제", systemImage: "trash", role: .destructive) {
+        .contextMenu {
+          Button("삭제", systemImage: "trash", role: .destructive) {
 
+          }
         }
       }
+      .padding(16)
     }
-    .environment(\.editMode, .constant(.active))
+    .background(
+      Color(uiColor: .systemGroupedBackground)
+//      MeshGradient(width: 2, height: 2, points: [
+//        [0, 0], [1, 0],
+//        [0, 1], [1, 1]
+//      ], colors: [
+//        .pink, .indigo,
+//        .indigo, .blue
+//      ])
+//      .ignoresSafeArea()
+    )
     .safeAreaBar(edge: .bottom) {
       recipeGenerateButton
         .disabled(selection.isEmpty)
         .padding(.bottom)
     }
-    .navigationTitle("식재료 목록")
+    .navigationTitle("냉장고")
     .toolbar {
       ToolbarItem(placement: .primaryAction) {
         Button("추가", systemImage: "plus") {
@@ -72,5 +100,3 @@ struct IngredientList: View {
 #Preview {
   ContentView()
 }
-
-
