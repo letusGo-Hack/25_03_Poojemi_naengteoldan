@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct RecipeDetailView: View {
-  let recipe: Recipe
+  let recipe: RecipeItem
   @State private var animateHeader = false
   @State private var animateCards = false
   
   var body: some View {
     VStack {
       VStack(spacing: 0) {
-        HeaderSection(recipeName: recipe.name, animateHeader: animateHeader)
+        HeaderSection(recipeName: recipe.title, animateHeader: animateHeader)
         
         // 메인 콘텐츠
         recipeSectionsView
@@ -83,7 +83,7 @@ struct RecipeDetailView: View {
         
         // 조리법 섹션
         Section {
-          InstructionsView(instructions: recipe.instructions, animateCards: animateCards)
+          InstructionsView(instructions: recipe.directions, animateCards: animateCards)
         } header: {
           SectionHeader(
             title: "조리법",
@@ -135,37 +135,4 @@ struct SectionHeader: View {
     .scaleEffect(animateCards ? 1 : 0.8)
     .opacity(animateCards ? 1 : 0)
   }
-}
-
-struct SampleView: View {
-  var body: some View {
-    RecipeDetailView(recipe: Recipe(
-      name: "매콤한 제육볶음",
-      ingredients: [
-        "대패삼겹살 300g",
-        "대파 2대",
-        "양파 1개",
-        "설탕 1큰술",
-        "고추장 2큰술",
-        "간장 1큰술",
-        "마늘 3쪽",
-        "생강 1조각"
-      ],
-      instructions: [
-        "대패삼겹살을 한입 크기로 자르고, 양파와 대파도 적당한 크기로 썰어주세요.",
-        "마늘과 생강을 다져서 준비해주세요.",
-        "팬에 기름을 두르고 중불에서 대패삼겹살을 볶아주세요.",
-        "고기가 익으면 마늘, 생강, 양파를 넣고 함께 볶아주세요.",
-        "고추장, 간장, 설탕을 넣고 골고루 섞어가며 볶아주세요.",
-        "마지막에 대파를 넣고 살짝 볶아 완성해주세요.마지막에 대파를 넣고 살짝 볶아 완성해주세요.마지막에 대파를 넣고 살짝 볶아 완성해주세요.마지막에 대파를 넣고 살짝 볶아 완성해주세요.마지막에 대파를 넣고 살짝 볶아 완성해주세요.마지막에 대파를 넣고 살짝 볶아 완성해주세요.마지막에 대파를 넣고 살짝 볶아 완성해주세요."
-      ],
-      prepTime: "15분",
-      cookTime: "20분",
-      servings: "2-3인분"
-    ))
-  }
-}
-
-#Preview {
-  SampleView()
 }

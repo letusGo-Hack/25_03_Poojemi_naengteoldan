@@ -13,7 +13,7 @@ import FoundationModels
 class RecipeGeneratorViewModel {
   
   // MARK: - Public Properties
-  var generatedRecipe: Recipe?
+  var generatedRecipe: RecipeItem?
   var isLoading: Bool = false
   var errorMessage: String?
   var modelAvailabilityStatus: String = "모델 가용성 확인 중..."
@@ -54,7 +54,7 @@ class RecipeGeneratorViewModel {
       
       let response = try await session.respond(
         to: prompt,
-        generating: Recipe.self,
+        generating: RecipeItem.self,
         options: GenerationOptions(
           sampling: .greedy,
           temperature: 0.3

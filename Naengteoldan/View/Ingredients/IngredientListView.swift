@@ -44,7 +44,6 @@ struct IngredientListView: View {
         .disabled(selection.isEmpty)
         .padding(.bottom)
     }
-    .navigationTitle("냉장고")
     .toolbar {
       ToolbarItem(placement: .primaryAction) {
         Button("추가", systemImage: "plus") {
