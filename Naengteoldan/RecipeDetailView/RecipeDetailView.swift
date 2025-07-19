@@ -14,10 +14,10 @@ struct RecipeDetailView: View {
   @State private var animateCards = false
   
   var body: some View {
-    VStack {
-      HeaderSection(recipeName: recipe.name, animateHeader: animateHeader)
-      
+    ScrollView {
       VStack(spacing: 0) {
+        HeaderSection(recipeName: recipe.name, animateHeader: animateHeader)
+        
         // 메인 콘텐츠
         VStack(spacing: DesignSystem.Spacing.huge) {
           // 요리 정보 카드들
@@ -30,16 +30,27 @@ struct RecipeDetailView: View {
           tabContent
         }
         .padding(.horizontal, DesignSystem.Spacing.extraLarge)
-        .padding(.top, -DesignSystem.Spacing.extraLarge - 10)
+        .padding(.vertical, DesignSystem.Spacing.huge)
+        .background(
+          RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.extraLarge)
+            .fill(Color(.systemBackground))
+            .shadow(
+              color: DesignSystem.Shadow.text.color.opacity(0.1),
+              radius: DesignSystem.Shadow.card.radius,
+              x: DesignSystem.Shadow.card.x,
+              y: -DesignSystem.Shadow.card.y
+            )
+        )
+        .offset(y: -DesignSystem.Spacing.extraLarge)
       }
-      .ignoresSafeArea(edges: .top)
-      .onAppear {
-        withAnimation(DesignSystem.Animation.spring) {
-          animateHeader = true
-        }
-        withAnimation(DesignSystem.Animation.springSlow.delay(0.3)) {
-          animateCards = true
-        }
+    }
+    .ignoresSafeArea(edges: .top)
+    .onAppear {
+      withAnimation(DesignSystem.Animation.spring) {
+        animateHeader = true
+      }
+      withAnimation(DesignSystem.Animation.springSlow.delay(0.3)) {
+        animateCards = true
       }
     }
   }
@@ -95,10 +106,14 @@ struct RecipeDetailView: View {
           InstructionsView(instructions: recipe.instructions, animateCards: animateCards)
         }
       }
-      .transition(.asymmetric(
-        insertion: .move(edge: .trailing).combined(with: .opacity),
-        removal: .move(edge: .leading).combined(with: .opacity)
-      ))
+      .transition(
+        .asymmetric(
+          insertion: .move(edge: .trailing)
+            .combined(with: .opacity),
+          removal: .move(edge: .leading)
+            .combined(with: .opacity)
+        )
+      )
     }
     .frame(height: DesignSystem.Size.tabContentHeight)
   }

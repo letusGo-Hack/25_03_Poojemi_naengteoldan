@@ -25,17 +25,36 @@ struct TabButton: View {
       .foregroundColor(isSelected ? .white : .primary)
       .frame(maxWidth: DesignSystem.Size.cardMaxWidth)
       .padding(.vertical, DesignSystem.Spacing.medium)
-      .background(
-        Group {
-          if isSelected {
-            DesignSystem.Colors.primaryButtonGradient
-          } else {
-            Color.clear
-          }
-        }
-      )
+//      .background(
+//        Group {
+//          if isSelected {
+//            DesignSystem.Colors.primaryButtonGradient
+//          } else {
+//            Color.clear
+//          }
+//        }
+//      )
       .clipShape(RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.large - 2))
     }
     .buttonStyle(PlainButtonStyle())
   }
+}
+
+#Preview {
+  VStack {
+    HStack(spacing: 0) {
+      TabButton(title: "재료", icon: "🥕", isSelected: true) {}
+      TabButton(title: "조리법", icon: "📝", isSelected: false) {}
+    }
+    .background(DesignSystem.Colors.cardBackground)
+    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.large))
+    
+    HStack(spacing: 0) {
+      TabButton(title: "재료", icon: "🥕", isSelected: false) {}
+      TabButton(title: "조리법", icon: "📝", isSelected: true) {}
+    }
+    .background(DesignSystem.Colors.cardBackground)
+    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.large))
+  }
+  .padding()
 }

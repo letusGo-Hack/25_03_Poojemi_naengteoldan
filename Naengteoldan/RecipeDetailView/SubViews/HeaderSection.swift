@@ -59,8 +59,6 @@ struct HeaderSection: View {
     .clipShape(
       .rect(
         topLeadingRadius: 0,
-        bottomLeadingRadius: DesignSystem.CornerRadius.extraLarge,
-        bottomTrailingRadius: DesignSystem.CornerRadius.extraLarge,
         topTrailingRadius: 0
       )
     )
