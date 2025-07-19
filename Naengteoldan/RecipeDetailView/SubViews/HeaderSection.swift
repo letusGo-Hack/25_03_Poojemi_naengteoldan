@@ -12,11 +12,18 @@ struct HeaderSection: View {
   let animateHeader: Bool
   
   var body: some View {
-    ZStack {
+    ZStack(alignment: .bottom) {
+      Image("FoodSample")
+        .resizable()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .aspectRatio(contentMode: .fill)
+        .opacity(0.8)
+
       VStack(spacing: DesignSystem.Spacing.large) {
         // 레시피 이름
         Text(recipeName)
-          .font(DesignSystem.Typography.largeTitle)
+//          .font(DesignSystem.Typography.largeTitle)
+          .font(.system(size: 100))
           .foregroundColor(.white)
           .multilineTextAlignment(.center)
           .scaleEffect(animateHeader ? 1 : 0.5)
@@ -26,7 +33,7 @@ struct HeaderSection: View {
     }
     .frame(height: 300)
     .frame(maxWidth: .infinity)
-    .background(.gray)
+    .background(.black)
     .clipShape(
       .rect(
         topLeadingRadius: 0,

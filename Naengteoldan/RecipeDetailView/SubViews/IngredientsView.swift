@@ -26,11 +26,14 @@ struct IngredientsView: View {
         }
         .padding(.horizontal, DesignSystem.Spacing.extraLarge)
         .padding(.vertical, DesignSystem.Spacing.medium)
-        .background(
-          RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.medium)
-            .fill(.white)
-            .stroke(.black.opacity(0.7), lineWidth: 1)
-        )
+//        .background(
+//          RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.medium)
+//            .fill(.white)
+//            .stroke(.black.opacity(0.7), lineWidth: 1)
+//        )
+        .glassEffect(.regular,
+                     in: RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.medium)
+                     )
         .opacity(animateCards ? 1 : 0)
         .animation(DesignSystem.Animation.spring.delay(Double(index) * 0.1), value: animateCards)
       }

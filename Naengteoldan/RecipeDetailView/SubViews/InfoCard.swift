@@ -20,19 +20,16 @@ struct InfoCard: View {
       
       Text(title)
         .font(DesignSystem.Typography.caption)
-        .foregroundColor(.secondary)
-      
+        .foregroundColor(.white.opacity(0.7))
+
       Text(value)
         .font(DesignSystem.Typography.body)
-        .foregroundColor(.primary)
+        .foregroundColor(.white.opacity(0.9))
     }
     .frame(maxWidth: DesignSystem.Size.cardMaxWidth)
     .padding(.vertical, DesignSystem.Spacing.large)
-    .background(
-      RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.medium)
-        .fill(color.opacity(DesignSystem.Opacity.overlay))
-        .stroke(color.opacity(DesignSystem.Opacity.border), lineWidth: 1)
-    )
+
+    .glassEffect(.regular.tint(color), in: RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.medium))
   }
 }
 
