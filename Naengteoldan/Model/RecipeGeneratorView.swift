@@ -10,7 +10,7 @@ import Combine
 import FoundationModels
 
 struct RecipeGeneratorView: View {
-  @StateObject private var viewModel = RecipeGeneratorViewModel()
+  @State private var viewModel = RecipeGeneratorViewModel()
   
   var body: some View {
     NavigationView {
@@ -25,7 +25,9 @@ struct RecipeGeneratorView: View {
           .padding(.horizontal)
           .autocorrectionDisabled()
         
-        Button(action: viewModel.generateRecipe) {
+        Button(action: {
+          Task { await viewModel.generateRecipe() }
+        }) {
           Text(viewModel.isLoading ? "레시피 생성 중..." : "레시피 생성")
             .font(.headline)
             .padding()
@@ -34,7 +36,7 @@ struct RecipeGeneratorView: View {
             .foregroundColor(.white)
             .cornerRadius(10)
         }
-        .disabled(viewModel.isLoading || viewModel.ingredientsInput.isEmpty || viewModel.systemLanguageModel.availability != .available)
+        .disabled(viewModel.isLoading || viewModel.ingredientsInput.isEmpty)
         .padding(.horizontal)
         
         if let recipe = viewModel.generatedRecipe {
@@ -91,3 +93,4 @@ struct RecipeGeneratorView: View {
     }
   }
 }
+
