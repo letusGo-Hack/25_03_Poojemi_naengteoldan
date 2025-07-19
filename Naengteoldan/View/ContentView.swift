@@ -11,24 +11,18 @@ struct ContentView: View {
   @State var modelData = RecipeGeneratorViewModel()
   
   var body: some View {
-    TabView {
-      Tab {
-        NavigationStack {
-          if let generatedRecipe = modelData.generatedRecipe {
-            RecipeDetailView(recipe: generatedRecipe)
-          } else {
-            IngredientListView(modelData: modelData)
-          }
+    NavigationStack {
+      AddIngredientView(modelData: modelData)
+        .allowsHitTesting(!modelData.isLoading)
+        .overlay {
+          LoadingView(isReceiptReady: $modelData.isLoading)
+            .glassEffect(.regular, in: Rectangle())
+            .ignoresSafeArea()
         }
-      } label: {
-        Label("냉장고", systemImage: "refrigerator")
-      }
-
-      Tab {
-
-      } label: {
-        Label("즐겨찾기", systemImage: "heart")
-      }
+        .sheet(item: $modelData.generatedRecipe) { recipe in
+          RecipeDetailView(recipe: recipe)
+            .presentationDragIndicator(.visible)
+        }
     }
     .task {
       // pre-warm model
